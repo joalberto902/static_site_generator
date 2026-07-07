@@ -1,4 +1,5 @@
 from enum import Enum
+from htmlnode import *
 
 class TextType(Enum):
     """An Enum for the types of types int the markdown files
@@ -63,7 +64,21 @@ class TextNode:
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
 
 
-
+def text_node_to_html_node(text: TextNode) -> LeafNode:
+    match text.text_type:
+        case TextType.PLAIN_TEXT:
+            return LeafNode(None, text.text)
+        case TextType.BOLD_TEXT:
+            return LeafNode("b", text.text)
+        case TextType.ITALIC_TEXT:
+            return LeafNode("i", text.text)
+        case TextType.CODE_TEXT:
+            return LeafNode("code", text.text)
+        case TextType.LINKS:
+            return LeafNode("a", text.text, props= {"href": text.url})#type:ignore
+        case TextType.IMAGES:
+            return LeafNode("img", "", props={"src": text.url, "alt": text.text})#type:ignore
+      
 
 
 
