@@ -86,6 +86,13 @@ class ParentNode(HTMLNode):
         for child in self.children:
             final_middle_string += child.to_html()
         return f"<{self.tag}{self.props_to_html()}>{final_middle_string}</{self.tag}>"
+    def set_children(self, children: HTMLNode | list[HTMLNode]):
+        if isinstance(children, HTMLNode):
+            self.children.append(children)
+            return 
+
+        self.children.extend(children)
+
 
 
 

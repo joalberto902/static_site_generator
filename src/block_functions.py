@@ -2,11 +2,15 @@ import re
 from blocktype import BlockType
 
 def markdown_to_blocks(markdown: str) -> list[str]:
-    return list(filter(None, map(lambda x: x.strip(), markdown.split("\n\n"))))
-
+    blocks: list[str] = []
+    for unp_block in markdown.split("\n\n"):
+        if unp_block.strip() == "":
+            continue
+        blocks.append(unp_block.strip())
+    return blocks
 def block_to_block_type(markdown: str) -> BlockType:
     heading_pattern: str = r"^#{1,6} .*?$"
-    code_pattern: str = r"^```\n.*?```$"
+    code_pattern: str = r"^```\n.*?\n{0,1}```$"
     quote_pattern: str = r"^> {0,1}.*?$"
     unordered_list_pattern: str = r"^(- .*?\n{0,1})+$"
     ordered_list_pattern: str = r"^\d+\. .*?$"
@@ -15,7 +19,7 @@ def block_to_block_type(markdown: str) -> BlockType:
     if re.match(heading_pattern, markdown):
         return BlockType.HEADING
 
-    if re.match(code_pattern, markdown):
+    if re.match(code_pattern, markdown, re.DOTALL):
         return BlockType.CODE
 
     if re.match(quote_pattern, markdown):
@@ -29,4 +33,3 @@ def block_to_block_type(markdown: str) -> BlockType:
         return BlockType.ORDERED_LIST
 
     return BlockType.PARAGRAPH
-
