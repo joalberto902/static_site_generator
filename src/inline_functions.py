@@ -121,6 +121,15 @@ def text_to_textnodes(text:str) -> list[TextNode]:
 
     return apply_bold
 
+def extract_title(markdown: str) -> str:
+    title = re.findall(r"^\s*#{1}\s+(.*)", markdown, re.MULTILINE)
+    if not title:
+        raise Exception("Markdown has no title")
+    return title[0]
+
+
+
+
 
 
 

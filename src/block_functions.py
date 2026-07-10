@@ -11,7 +11,7 @@ def markdown_to_blocks(markdown: str) -> list[str]:
 def block_to_block_type(markdown: str) -> BlockType:
     heading_pattern: str = r"^#{1,6} .*?$"
     code_pattern: str = r"^```\n.*?\n{0,1}```$"
-    quote_pattern: str = r"^> {0,1}.*?$"
+    quote_pattern: str = r"^(\s*>\s*.+\n{0,1})+$"
     unordered_list_pattern: str = r"^(\s*-\s.+\n{0,1})+$"
     ordered_list_pattern: str = r"^(\s*\d+\.\s+.+\n{0,1})+$"
 

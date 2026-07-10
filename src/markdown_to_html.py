@@ -22,7 +22,7 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
                 wrapper.set_children(code_text)
                 final_html.set_children(wrapper)
             case BlockType.QUOTE:
-                text = block.split('>', maxsplit=1)[1].strip()
+                text = block.replace(">", "").strip()
                 quote: HTMLNode = ParentNode("blockquote", text_to_html_nodes(text))
                 final_html.set_children(quote)
             case BlockType.UNORDERED_LIST:
