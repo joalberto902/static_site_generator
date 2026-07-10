@@ -57,7 +57,8 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir
 
     return None
 def main() -> int:
-    basepath = sys.argv[0] or "/"
+    basepath = sys.argv[1] or "/"
+    print(basepath)
     copy_src_to_destination(f"../static_site_generator/static/", "../static_site_generator/docs/")
     generate_pages_recursive("../static_site_generator/content/", "../static_site_generator/template.html", "../static_site_generator/docs/", basepath)
     return 0
