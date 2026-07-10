@@ -12,9 +12,9 @@ def generate_page(
 )-> None:
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
-    absolute_from_path = os.path.expanduser(from_path)
-    absolute_template_path = os.path.expanduser(template_path)
-    absolute_dest_path = os.path.expanduser(dest_path)
+    absolute_from_path = os.path.abspath(from_path)
+    absolute_template_path = os.path.abspath(template_path)
+    absolute_dest_path = os.path.abspath(dest_path)
 
     markdown_file = open(absolute_from_path, "r")
     template_file = open(absolute_template_path, "r")
@@ -40,7 +40,7 @@ def generate_page(
     return None
 
 def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str, base_path:str) -> None:
-    absolute_dir_path_content = os.path.expanduser(dir_path_content)
+    absolute_dir_path_content = os.path.abspath(dir_path_content)
     for content in os.listdir(absolute_dir_path_content):
         path = os.path.join(dir_path_content, content)
         if os.path.isfile(path) and path.endswith(".md"):
@@ -49,7 +49,7 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir
             continue
         if os.path.isfile(path):
             continue
-        new_path = os.path.join(os.path.expanduser(dest_dir_path), content) 
+        new_path = os.path.join(os.path.abspath(dest_dir_path), content) 
         if not os.path.exists(path):
             os.makedirs(os.path.join(new_path), exist_ok=True)
         
@@ -58,9 +58,8 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir
     return None
 def main() -> int:
     basepath = sys.argv[1] or "/"
-    print(basepath)
-    copy_src_to_destination(f"../static_site_generator/static/", "../static_site_generator/docs/")
-    generate_pages_recursive("../static_site_generator/content/", "../static_site_generator/template.html", "../static_site_generator/docs/", basepath)
+    copy_src_to_destination(f"..{basepath}static/", f"..{basepath}docs/")
+    generate_pages_recursive(f"..{basepath}content/", f"..{basepath}template.html", f"..{basepath}docs/", basepath)
     return 0
 
 if __name__ == "__main__":
