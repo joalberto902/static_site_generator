@@ -50,7 +50,7 @@ class LeafNode(HTMLNode):
         super().__init__(tag=tag, value=value,props=props)
 
     def to_html(self) -> str:
-        if not self.value:
+        if self.value is None:
             raise ValueError("All LeafNode instances must have values")
         if self.tag is None:
             return self.value
@@ -77,9 +77,9 @@ class ParentNode(HTMLNode):
         super().__init__(tag = tag,children= children,props= props)
 
     def to_html(self) -> str:
-        if not self.tag:
+        if self.tag is None:
             raise ValueError("All instances of ParentNode must have tags")
-        if not self.children:
+        if self.children is None:
             raise ValueError("All instances of ParentNode must have children")
 
         final_middle_string = ""
@@ -88,10 +88,10 @@ class ParentNode(HTMLNode):
         return f"<{self.tag}{self.props_to_html()}>{final_middle_string}</{self.tag}>"
     def set_children(self, children: HTMLNode | list[HTMLNode]):
         if isinstance(children, HTMLNode):
-            self.children.append(children)
+            self.children.append(children) #type: ignore
             return 
 
-        self.children.extend(children)
+        self.children.extend(children)#type: ignore
 
 
 

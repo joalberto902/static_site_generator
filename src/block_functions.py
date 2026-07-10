@@ -12,8 +12,8 @@ def block_to_block_type(markdown: str) -> BlockType:
     heading_pattern: str = r"^#{1,6} .*?$"
     code_pattern: str = r"^```\n.*?\n{0,1}```$"
     quote_pattern: str = r"^> {0,1}.*?$"
-    unordered_list_pattern: str = r"^(- .*?\n{0,1})+$"
-    ordered_list_pattern: str = r"^\d+\. .*?$"
+    unordered_list_pattern: str = r"^(\s*-\s.+\n{0,1})+$"
+    ordered_list_pattern: str = r"^(\s*\d+\.\s+.+\n{0,1})+$"
 
 
     if re.match(heading_pattern, markdown):
@@ -25,11 +25,11 @@ def block_to_block_type(markdown: str) -> BlockType:
     if re.match(quote_pattern, markdown):
         return BlockType.QUOTE
 
-    if re.match(unordered_list_pattern, markdown):
+    if re.match(unordered_list_pattern, markdown, ):
         return BlockType.UNORDERED_LIST
     # TODO: Find a way to make the ordered lists really be sequential and
     # starting from 1
-    if re.match(ordered_list_pattern, markdown, re.MULTILINE):
+    if re.match(ordered_list_pattern, markdown, ):
         return BlockType.ORDERED_LIST
 
     return BlockType.PARAGRAPH

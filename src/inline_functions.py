@@ -1,6 +1,5 @@
 import re
-from htmlnode import HTMLNode, LeafNode, ParentNode
-from textnode import TextNode, TextType, text_node_to_html_node
+from textnode import TextNode, TextType
 
 
 def split_nodes_delimiter(
@@ -13,40 +12,37 @@ def split_nodes_delimiter(
         if node.text_type != TextType.PLAIN_TEXT:
             new_nodes.append(node)
             continue 
-        text_split = node_transform(
-            parse_delimiters(
-                node.text,
-                delimiter, 
-            ),
-            text_type,
-        ) 
-        new_nodes.extend(text_split)
-
+        open_delimiter: bool = False
+        text = node.text
+        while True:
+            find_delimiter: list[str] = text.split(delimiter, maxsplit=1)
+            if text == find_delimiter[0]:
+                if open_delimiter:
+                    raise ValueError(f"{delimiter} was not closed on{node.text}")
+                if find_delimiter[0] != "":
+                    new_nodes.append(TextNode(
+                        find_delimiter[0], 
+                        TextType.PLAIN_TEXT
+                    ))
+                break
+            if find_delimiter[0] == "":
+                text = find_delimiter[1]
+                open_delimiter = not open_delimiter
+                continue
+            if open_delimiter:
+                text = find_delimiter[1]
+                new_nodes.append(TextNode(
+                    find_delimiter[0],
+                    text_type
+                ))
+            else:
+                text = find_delimiter[1]
+                new_nodes.append(TextNode(
+                    find_delimiter[0], 
+                    TextType.PLAIN_TEXT
+                ))
+            open_delimiter = not open_delimiter
     return new_nodes
-
-def parse_delimiters(
-    text: str,
-    delimiter: str, 
-) -> list[str]:
-    delimited: list[str] = list(filter(None, text.split(delimiter)))
-    if len(delimited)%2 == 0:
-        raise ValueError("Markdown text is invalid")
-    return delimited
-
-def node_transform(
-    texts: list[str],
-    text_type: TextType,
-) -> list[TextNode]:
-    transformed: list[TextNode] = []
-    for i, text in enumerate(texts):
-        type_text: TextType = text_type if i%2 else TextType.PLAIN_TEXT
-        transformed.append(
-            TextNode(
-                text,
-                type_text
-            )
-        )
-    return transformed
 
 
 def extract_markdown_images(text: str) -> list[tuple[str, str]]:
@@ -121,7 +117,7 @@ def text_to_textnodes(text:str) -> list[TextNode]:
     apply_images: list[TextNode] = split_nodes_image(apply_links)
     apply_code: list[TextNode] = split_nodes_delimiter(apply_images, "`", TextType.CODE_TEXT)
     apply_italic: list[TextNode] = split_nodes_delimiter(apply_code, "_", TextType.ITALIC_TEXT)
-    apply_bold: list[TextNode] = split_nodes_delimiter(apply_italic, "*", TextType.BOLD_TEXT)
+    apply_bold: list[TextNode] = split_nodes_delimiter(apply_italic, "**", TextType.BOLD_TEXT)
 
     return apply_bold
 

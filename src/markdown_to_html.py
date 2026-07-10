@@ -7,6 +7,8 @@ from block_functions import *
 def markdown_to_html_node(markdown: str) -> HTMLNode:
     markdown_blocks: list[str] = markdown_to_blocks(markdown)
     final_html: HTMLNode = ParentNode("div", [])
+    if markdown == "":
+        return final_html
     for block in markdown_blocks:
         block_type: BlockType = block_to_block_type(block)
         match block_type:
@@ -26,6 +28,10 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
             case BlockType.UNORDERED_LIST:
                 lst: HTMLNode = ParentNode("ul", [])
                 for item in block.split("\n"):
+                    if not item.strip():
+                        continue
+                    item = item.strip()
+                    item = item.strip()
                     text = item.split(" ", maxsplit=1)[1].strip()
                     new_item: HTMLNode = ParentNode("li", text_to_html_nodes(text))
                     lst.set_children(new_item)
@@ -33,6 +39,9 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
             case BlockType.ORDERED_LIST:
                 lst: HTMLNode = ParentNode("ol", [])
                 for item in block.split("\n"):
+                    if not item.strip():
+                        continue
+                    item = item.strip()
                     text = item.split(" ", maxsplit=1)[1].strip()
                     new_item: HTMLNode = ParentNode("li", text_to_html_nodes(text))
                     lst.set_children(new_item)
